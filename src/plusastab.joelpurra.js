@@ -23,10 +23,16 @@ var JoelPurra = JoelPurra || {};
 	// http://api.jquery.com/event.which/
 	// https://developer.mozilla.org/en/DOM/KeyboardEvent#Virtual_key_codes
 	var KEY_NUM_PLUS = 107;
+	var KEY_NUM_MINUS = 109;
+	//var KEY_NUM_STAR = 106;
+	//var KEY_NUM_SLASH = 109;
 
 	// Add options defaults here
 	var internalDefaults = {
-		key: KEY_NUM_PLUS
+		// formStartSelector: "form input:first",
+		// formEndSelector: "form input:last",
+		key: KEY_NUM_PLUS,
+		shiftedKey: KEY_NUM_MINUS
 	};
 
 	var options = $.extend(true, {}, internalDefaults);
@@ -54,11 +60,14 @@ var JoelPurra = JoelPurra || {};
 		}
 
 		function isChosenTabkey(key) {
-			if (key === options.key
-				|| ($.isArray(options.key)
-					&& $.inArray(key, options.key) !== -1)) {
+			if (key === options.key ||
+					($.isArray(options.key) && ($.inArray(key, options.key) !== -1))) {
+				return 1;
+			}
 
-				return true;
+			if (key === options.shiftedKey ||
+					($.isArray(options.shiftedKey) && ($.inArray(key, options.shiftedKey) !== -1))) {
+				return -1;
 			}
 
 			return false;
@@ -67,6 +76,7 @@ var JoelPurra = JoelPurra || {};
 		function checkEmulatedTabKeyDown(event) {
 
 			var isTab = isChosenTabkey(event.which);
+			var isShifted = event.shiftKey || isTab == -1;
 
 			if (event.altKey || event.ctrlKey || event.metaKey || !isTab) { return; }
 
@@ -80,7 +90,9 @@ var JoelPurra = JoelPurra || {};
 				return;
 			}
 
-			var wasDone = performEmulatedTabbing(true, event.shiftKey, $target);
+			if (willLeaveForm(isShifted, $target)) { return; }
+
+			var wasDone = performEmulatedTabbing(true, isShifted, $target);
 
 			if (wasDone) {
 
@@ -94,6 +106,19 @@ var JoelPurra = JoelPurra || {};
 			return;
 		}
 		
+		// returns true if tab will leave the form; form is determined by selectors option.formStartSelect and option.formEndSelector
+		function willLeaveForm(isShifted, target) {
+			if (!options.formStartSelector && isShifted) { return false; }
+			if (!options.formEndSelector && !isShifted) { return false; }
+
+			var targetDom = target[0];
+			var formEnd = $(isShifted ? options.formStartSelector : options.formEndSelector);
+			if (formEnd.length == 0) { return false; }
+			var formEndDom = formEnd[0]
+
+			return targetDom == formEndDom;
+		}
+
 		function initializeAtLoad() {
 
 			$(document).on("keydown" + eventNamespace, checkEmulatedTabKeyDown);
