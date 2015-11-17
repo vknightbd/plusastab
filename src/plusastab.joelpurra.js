@@ -64,28 +64,11 @@ var JoelPurra = JoelPurra || {};
 			return false;
 		}
 
-		function isEmulatedTabkey(event) {
-
-			// Checked later for reverse tab
-			//&& !event.shiftKey
-
-			if (!event.altKey
-				&& !event.ctrlKey
-				&& !event.metaKey
-				&& isChosenTabkey(event.which)) {
-
-				return true;
-			}
-
-			return false;
-		}
-
 		function checkEmulatedTabKeyDown(event) {
 
-			if (!isEmulatedTabkey(event)) {
+			var isTab = isChosenTabkey(event.which);
 
-				return;
-			}
+			if (event.altKey || event.ctrlKey || event.metaKey || !isTab) { return; }
 
 			var $target = $(event.target);
 
