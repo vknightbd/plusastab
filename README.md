@@ -73,6 +73,19 @@ JoelPurra.PlusAsTab.setOptions({
   // Use the enter key and arrow down key as tab keys
   key: [13, 40]
 });
+
+// You can have "numpad -" as shift+tab
+JoelPurra.PlusAsTab.setOptions({
+  // Use the minus key as shift+tab
+  shiftedKey: [109]
+});
+
+// You can prevent the tab from going outside your form by passing selectors for the beginning and end of your form.
+JoelPurra.PlusAsTab.setOptions({
+  // Selectors for start and end of form
+  formStartSelector: '#first',
+  formEndSelector: '#cancel-button, #submit-button'
+});
 ```
 
 ### Using another key (or keys) instead of numpad plus

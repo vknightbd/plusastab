@@ -111,12 +111,8 @@ var JoelPurra = JoelPurra || {};
 			if (!options.formStartSelector && isShifted) { return false; }
 			if (!options.formEndSelector && !isShifted) { return false; }
 
-			var targetDom = target[0];
-			var formEnd = $(isShifted ? options.formStartSelector : options.formEndSelector);
-			if (formEnd.length == 0) { return false; }
-			var formEndDom = formEnd[0]
-
-			return targetDom == formEndDom;
+			var selector = isShifted ? options.formStartSelector : options.formEndSelector; // get selector for relevant edge of form
+			return target.is(selector); // returns true if target is edge of form
 		}
 
 		function initializeAtLoad() {
